@@ -152,6 +152,23 @@ async def tunefreemods(interaction : discord.Interaction):
     await interaction.response.send_message(embed=embed)
     # embed.add_field(name="", value="", inline=False)
 
+@client.tree.command(name="turboflow", description="Turbo Flow Rate for most common Turbo's within Mazdaspeed platform", guild=guild)
+async def turboflow(interaction : discord.Interaction):
+    embed = discord.Embed(
+        title="Turbo Flow Rates",
+        description="Here are the Flow Rates for the common turbos",
+        color=discord.Colour.green()
+    )
+    embed.add_field(name="K04", value="~35lbs/min", inline=False)
+    embed.add_field(name="BNR S1 / S2", value="40lbs/min", inline=False)    
+    embed.add_field(name="BNR S3", value="46lbs/min", inline=False)
+    embed.add_field(name="BNR S4 V4", value="53lbs/min", inline=False)
+    embed.add_field(name="BNR S4 V5", value="66lbs/min", inline=False)
+    embed.add_field(name="CTS4", value="50lbs/min", inline=False)
+    embed.add_field(name="CTS5", value="56lbs/min", inline=False)
+    embed.add_field(name="CTS6", value="64lbs/min", inline=False)
+    await interaction.response.send_message(embed=embed)
+
 @client.tree.command(name="tuners", description="List of Tuners who know the platform", guild=guild)
 async def tuners(interaction: discord.Interaction):
     speedwiz = 744994903611670538
@@ -206,6 +223,7 @@ async def faq(interaction : discord.Interaction):
 @client.tree.command(name="corn", description="Ethanol Fuel", guild=guild)
 async def corn(interaction : discord.Interaction):
     await interaction.response.send_message("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHhjNG9kZjl6dGdsdXcwb2FlOHFjeG0yeGtsbmZhNGlwbDNuOXU2diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/yUZvqAk6pjIYNlpEdc/giphy.gif")
+
 @client.event
 async def on_member_remove(member):
     channel = client.get_channel(1346017386373054486)
