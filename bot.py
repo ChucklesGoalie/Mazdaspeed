@@ -24,7 +24,8 @@ class Client(commands.Bot):
         self.json_file_path = None
         self.cog_folder = None
     async def on_ready(self):
-        print(f'Logged on as {self.user} \n {time.strftime(("[%d/%m/%Y, %I:%M:%S %p ET]"))}')
+        print(f'Logged on as {self.user} \n{time.strftime(("[%d/%m/%Y, %I:%M:%S %p ET]"))}')
+        print("Version 0.4")
         await self.tree.sync()
         try:
             guild = discord.Object(id=GUILD_ID)
@@ -32,8 +33,7 @@ class Client(commands.Bot):
             print(f'Synced {len(sync)} commands to guild {guild.id}')
         except Exception as e:
             print(f'Error syncing command: {e}')
-        game = discord.Game("Combines")
-        await self.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name="your concerns"))
+        await self.change_presence(status=discord.Status.online, activity=discord.Activity(type=discord.ActivityType.listening, name="Zoom Zoom Boom Forums"))
     async def on_command_error(self, ctx, error):
         user = ctx.message.author
         await ctx.send(error)
@@ -107,7 +107,7 @@ async def vendors(interaction: discord.Interaction):
     embed.add_field(name="Damond Motorsport", value=f"Website is: {DamondMT}", inline=False)
     await interaction.response.send_message(embed=embed)
 
-@client.tree.command(name="manual", description="Manual for Mazdaspeeds", guild=guild)
+@client.tree.command(name="manuals", description="Manual for Mazdaspeeds", guild=guild)
 async def manuals(interaction=discord.Interaction):
     embed = discord.Embed(
         title="Manuals for Mazdaspeeds",
@@ -193,7 +193,7 @@ async def horsepower_goals(interaction : discord.Interaction):
     embed = discord.Embed(
         title="Video of Horsepower goals",
         description="Please view the video linked in the title to watch PD Tuning explain what is all needed for certain Horsepower goals",
-        colour= discord.Colour.ash_theme(),
+        colour= discord.Colour.green(),
         url="https://www.dropbox.com/scl/fi/8dak78nwex3rj8m31bsqf/1548027956239.mp4?rlkey=zctnuhk8owo2xl2mi4b883lzu&e=1&dl=0"
     )
     embed.add_field(name="275-325", value="HPFP, Intake", inline=False)
@@ -210,7 +210,7 @@ async def faq(interaction : discord.Interaction):
     embed = discord.Embed(
         title="FAQ",
         description="",
-        colour= discord.Colour.ash_theme(),
+        colour= discord.Colour.green(),
         url=""
     )
     with open('HPFP type.jpg', 'rb') as f:
@@ -224,13 +224,51 @@ async def faq(interaction : discord.Interaction):
 async def corn(interaction : discord.Interaction):
     await interaction.response.send_message("https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExdHhjNG9kZjl6dGdsdXcwb2FlOHFjeG0yeGtsbmZhNGlwbDNuOXU2diZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/yUZvqAk6pjIYNlpEdc/giphy.gif")
 
+@client.tree.command(name="newspeed", description="So you bought a new to you Mazdaspeed... heres a quick guide on the mazdaspeed forum")
+async def newspeed(interaction : discord.Interaction):
+    await interaction.response.send_message("https://www.mazdaspeeds.org/threads/congratulations-you-bought-your-mazdaspeed-now-what.16270/")
+
+@client.tree.command(name="motormounts", description="Ever wonder what motor mounts you need for your Mazdaspeed?", guild=guild)
+async def motormounts(interaction : discord.Interaction):
+    await interaction.response.defer()
+    embed = discord.Embed(
+        title="Motor Mounts",
+        description="Motor mounts are what keep your engine from moving within the engine bay. They are meant to take the vibration of the engine. OEM motor mounts are original Mazda 3 mounts that are not meant to handle enormous mounts of torque like the L3-DISI engines. Here are a list of all part numbers and replacements.",
+        colour=discord.Colour.darker_grey()
+    )
+    embed.add_field(name="Mazdaspeed 3's", value="All Mazdaspeed Mounts are the same. You have the option of Race and Street bushings for the Polyurathane mount. Street is 70a and Race is 88a stiffness. The stiffer the mount is, the more Noise, Vibrations, and Harshness (NVH) you will feel. If you are daily driving the Speed, it is recommended that you get Street bushings. It is also recommended to replace the sides at the same time because the stiffness of one bushing will put more pressure and weight on the other side, therefore wearing out the weaker bushing faster. Rear Motor Mount does not have any choices for bushings, it is just the Race Bushing.", inline=False)
+    embed.add_field(name="Transmission Motor Mount (TMM)", value="OEM Part #:BBR3-39-070A \n[TMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed3-damond-motorsports-transmission-motor-mount?_pos=14&_sid=92c49384d&_ss=r)\n[TMM From Damond](https://damondmotorsports.com/collections/mazdaspeed-3/products/transmission-motor-mount)\n[TMM From CS](https://corksport.com/mazdaspeed-3-performance-transmission-mount.html)", inline=True)
+    embed.add_field(name="Rear Motor Mount (RMM)", value="OEM Part #:BBN5-39-040A \n[RMM From CW(Canadian)](https://www.cwturbochargers.com/products/damond-motorsports-rear-motor-mount?_pos=13&_sid=92c49384d&_ss=r)\n[RMM From Damond](https://damondmotorsports.com/collections/mazdaspeed-3/products/mazdaspeed3-rear-motor-mount-newly-revised)\n[RMM From CS](https://corksport.com/corksport-mazdaspeed-3-mazda-3-race-rear-motor-mount.html)", inline=True)
+    embed.add_field(name="Passenger Motor Mount (PMM)", value="OEM Part #:BBN5-39-060 \n[PMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed-3-damond-passenger-side-motor-mount?_pos=1&_sid=92c49384d&_ss=r)\n[PMM From Damond](https://damondmotorsports.com/collections/mazdaspeed-3/products/passenger-side-motor-mount-mazdaspeed3)\n[PMM From CS](https://corksport.com/corksport-mazdaspeed-3-passenger-side-motor-mount.html)", inline=True)
+    embed.add_field(name="Mazdaspeed 6", value="The bushings are the same stiffness as the Mazdaspeed 3's but bolt up differently to the 6's body.", inline=False)
+    embed.add_field(name="Transmission Motor Mount (TMM)", value="OEM Part #:GK2A-39-070D \n[TMM From CW(Canadian)](https://www.cwturbochargers.com/products/damond-motorsports-mazdaspeed6-transmission-mount?variant=43449915703511)\n[TMM From AWR/Graveyard Performance](https://www.graveyardperformance.com/products/awr-mazdaspeed-6-passenger-side-mount?_pos=1&_sid=feeb27596&_ss=r)\n", inline=True)
+    embed.add_field(name="Rear Motor Mount (RMM)", value="OEM Part #:DISCONTINUED \n[RMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed6-damond-motorsports-rear-motor-mount?variant=43443331825879)\n[RMM From Damond](https://damondmotorsports.com/products/rear-motor-mount-mazdaspeed6?_pos=24&_sid=26846115c&_ss=r)", inline=True)
+    embed.add_field(name="Passenger Motor Mount (PMM)", value="OEM Part #:GP9A-39-060D \n[PMM From CW(Canadian)](https://www.cwturbochargers.com/products/damond-motorsports-mazdaspeed6-passenger-side-motor-mount?variant=43449902399703)\n[PMM From Damond](https://damondmotorsports.com/products/passenger-side-motor-mount-mazdaspeed6?_pos=9&_sid=26846115c&_ss=r)", inline=True)
+    await interaction.followup.send(embed=embed)
+
+@client.tree.command(name="bumpersag", description="Want to fix your bumper sag? ", guild=guild)
+async def bumpersag(interaction : discord.Interaction):
+    await interaction.response.defer()
+    embed= discord.Embed(
+        title="Raiderfab's Website",
+        description="Ever needed better fitment or a quick release bumper? Raiderfab has made a nice and easy solution to said issue!",
+        url="https://raiderfab.myshopify.com/",
+        colour=discord.Colour.dark_magenta()
+    )
+    embed.add_field(name="Mazdaspeed 3 Gen 1", value="[Fenderwell area](https://raiderfab.myshopify.com/products/2007-2009-mazdaspeed-3-bumper-fitment-solution-fenderwell-only)\n[Full Kit](https://raiderfab.myshopify.com/products/2007-2009-mazdaspeed-3-bumper-fitment-solution-full-kit)", inline=True)
+    embed.add_field(name="Mazdaspeed 3 Gen 2", value="[Fitment Kit](https://raiderfab.myshopify.com/products/2010-2013-mazdaspeed-3-bumper-fitment-solution)", inline=True)
+    embed.add_field(name="Mazdaspeed 6", value="[Lower area](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-kit)\n[Fenderwell area](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-kit-fenderwell-area)\n[Headlight area](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-kit-headlight-area)\n[Full Kit](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-full-kit)", inline=False)
+    embed.set_author(name=f"Thanks to Raiderfab for making this easy solution!", url=f"{embed.url}")
+    await interaction.followup.send(embed=embed)
 @client.event
 async def on_member_remove(member):
-    channel = client.get_channel(1346017386373054486)
+    channel = member.guild.get_channel(706661568091389973)
     year_left = time.strftime('%d-%m-%Y')
     time_left = time.strftime('%H:%M')
     if channel:
         await channel.send(f'{year_left}\n{time_left}\n{member.name}') 
+    else:
+        print(f'{year_left}\n{time_left}\n{member.name}')
 
 
 
