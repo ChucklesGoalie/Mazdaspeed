@@ -6,6 +6,7 @@ import time
 import json
 import os
 import io
+import math
 import socket
 import pandas as pd
 import aiohttp
@@ -13,7 +14,7 @@ import re
 import asyncio
 from collections import Counter
 import numpy as np
-from client_run import NORMAL_BOT_KEY
+from client_run import NORMAL_BOT_KEY, DEV_BOT_KEY
 cogs_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'cogs')
 
 GUILD_ID = 462106215007256576 
@@ -39,7 +40,6 @@ class Client(commands.Bot):
         await ctx.send(error)
         print(f'[{user.guild}]', f'{time.strftime(("[%d/%m/%Y, %I:%M:%S %p ET]"))}', error)
 
-
 intents = discord.Intents.default()
 intents.message_content = True
 intents.messages = True  
@@ -60,6 +60,7 @@ async def exhaust(interaction: discord.Interaction):
 
 @client.tree.command(name='suspension', description='Asks what suspension you should use', guild=guild)
 async def suspension(interaction: discord.Interaction):
+    await interaction.response.defer()
     embed = discord.Embed(
         title="What's the best suspension for Mazdaspeed!",
         color=discord.Color.blue()
@@ -69,7 +70,7 @@ async def suspension(interaction: discord.Interaction):
     embed.add_field(name="Good Coilovers:", value="Fortune Auto, KW", inline=True)
     embed.add_field(name="Suspension forum:", value="https://mazdaspeeds.org/index.php?threads/the-official-ms3-suspension-thread.15531/", inline=False)
     embed.set_footer(text="These are based off of previous people's feels to each suspension setup, and overall build quality. Less quality will always result in lower street and track performance and better suspension will always have superior adjustability. Please visit forum for more info")
-    await interaction.response.send_message(embed=embed)
+    await interaction.followup.send(embed=embed)
 
 @client.tree.command(name='turbos', description='Asks what turbo you should use and for what application', guild=guild)
 async def turbos(interaction: discord.Interaction):
@@ -134,7 +135,7 @@ async def maintenance(interaction : discord.Interaction):
     embed.add_field(name="3,000 Miles (5,000km)", value="Oil Change \nInspect Fluids \nLook for Leaks", inline=False)
     embed.add_field(name="15,000 miles (25,000km)", value="Change / Clean air filters \nchange brake fluid", inline=False)
     embed.add_field(name="30,000 Miles (50,000km)", value="Check / Replace Spark Plugs (Do Compression test since you are there) \nDrain and Fill Transmission Fluid \n Coolant flush", inline=False)
-    embed.add_field(name="50,000 Miles (80,000km) and or\n100,000 Miles (160,000km)", value="Valve Cleaning \nInjector Cleaning / Flow Test \nVVT Check for 07-10 and early model 11's", inline=False)
+    embed.add_field(name="50,000 Miles (80,000km) and or\n100,000 Miles (160,000km)", value="Valve Cleaning \nInjector Cleaning / Flow Test \nVVT Inspection / Replacement (IMPORTANT FOR 07-11 MODEL YEARS)", inline=False)
     await interaction.response.send_message(embed=embed)
 
 @client.tree.command(name="tunefreemods", description="Modifications that do not require a tune on the vehicle", guild=guild)
@@ -236,13 +237,13 @@ async def motormounts(interaction : discord.Interaction):
         description="Motor mounts are what keep your engine from moving within the engine bay. They are meant to take the vibration of the engine. OEM motor mounts are original Mazda 3 mounts that are not meant to handle enormous mounts of torque like the L3-DISI engines. Here are a list of all part numbers and replacements.",
         colour=discord.Colour.darker_grey()
     )
-    embed.add_field(name="Mazdaspeed 3's", value="All Mazdaspeed Mounts are the same. You have the option of Race and Street bushings for the Polyurathane mount. Street is 70a and Race is 88a stiffness. The stiffer the mount is, the more Noise, Vibrations, and Harshness (NVH) you will feel. If you are daily driving the Speed, it is recommended that you get Street bushings. It is also recommended to replace the sides at the same time because the stiffness of one bushing will put more pressure and weight on the other side, therefore wearing out the weaker bushing faster. Rear Motor Mount does not have any choices for bushings, it is just the Race Bushing.", inline=False)
+    embed.add_field(name="Mazdaspeed 3's", value="All Mazdaspeed 3's Mounts are the same. You have the option of Race and Street bushings for the Polyurathane mount. Street is 70a and Race is 88a stiffness. The stiffer the mount is, the more Noise, Vibrations, and Harshness (NVH) you will feel. If you are daily driving the Speed, it is recommended that you get Street bushings. It is also recommended to replace the sides at the same time because the stiffness of one bushing will put more pressure and weight on the other side, therefore wearing out the weaker bushing faster. Rear Motor Mount does not have any choices for bushings, it is just the Race Bushing.", inline=False)
     embed.add_field(name="Transmission Motor Mount (TMM)", value="OEM Part #:BBR3-39-070A \n[TMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed3-damond-motorsports-transmission-motor-mount?_pos=14&_sid=92c49384d&_ss=r)\n[TMM From Damond](https://damondmotorsports.com/collections/mazdaspeed-3/products/transmission-motor-mount)\n[TMM From CS](https://corksport.com/mazdaspeed-3-performance-transmission-mount.html)", inline=True)
     embed.add_field(name="Rear Motor Mount (RMM)", value="OEM Part #:BBN5-39-040A \n[RMM From CW(Canadian)](https://www.cwturbochargers.com/products/damond-motorsports-rear-motor-mount?_pos=13&_sid=92c49384d&_ss=r)\n[RMM From Damond](https://damondmotorsports.com/collections/mazdaspeed-3/products/mazdaspeed3-rear-motor-mount-newly-revised)\n[RMM From CS](https://corksport.com/corksport-mazdaspeed-3-mazda-3-race-rear-motor-mount.html)", inline=True)
     embed.add_field(name="Passenger Motor Mount (PMM)", value="OEM Part #:BBN5-39-060 \n[PMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed-3-damond-passenger-side-motor-mount?_pos=1&_sid=92c49384d&_ss=r)\n[PMM From Damond](https://damondmotorsports.com/collections/mazdaspeed-3/products/passenger-side-motor-mount-mazdaspeed3)\n[PMM From CS](https://corksport.com/corksport-mazdaspeed-3-passenger-side-motor-mount.html)", inline=True)
     embed.add_field(name="Mazdaspeed 6", value="The bushings are the same stiffness as the Mazdaspeed 3's but bolt up differently to the 6's body.", inline=False)
     embed.add_field(name="Transmission Motor Mount (TMM)", value="OEM Part #:GK2A-39-070D \n[TMM From CW(Canadian)](https://www.cwturbochargers.com/products/damond-motorsports-mazdaspeed6-transmission-mount?variant=43449915703511)\n[TMM From AWR/Graveyard Performance](https://www.graveyardperformance.com/products/awr-mazdaspeed-6-passenger-side-mount?_pos=1&_sid=feeb27596&_ss=r)\n", inline=True)
-    embed.add_field(name="Rear Motor Mount (RMM)", value="OEM Part #:DISCONTINUED \n[RMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed6-damond-motorsports-rear-motor-mount?variant=43443331825879)\n[RMM From Damond](https://damondmotorsports.com/products/rear-motor-mount-mazdaspeed6?_pos=24&_sid=26846115c&_ss=r)", inline=True)
+    embed.add_field(name="Rear Motor Mount (RMM)", value="OEM Part #: DISCONTINUED \n[RMM From CW(Canadian)](https://www.cwturbochargers.com/products/mazdaspeed6-damond-motorsports-rear-motor-mount?variant=43443331825879)\n[RMM From Damond](https://damondmotorsports.com/products/rear-motor-mount-mazdaspeed6?_pos=24&_sid=26846115c&_ss=r)", inline=True)
     embed.add_field(name="Passenger Motor Mount (PMM)", value="OEM Part #:GP9A-39-060D \n[PMM From CW(Canadian)](https://www.cwturbochargers.com/products/damond-motorsports-mazdaspeed6-passenger-side-motor-mount?variant=43449902399703)\n[PMM From Damond](https://damondmotorsports.com/products/passenger-side-motor-mount-mazdaspeed6?_pos=9&_sid=26846115c&_ss=r)", inline=True)
     await interaction.followup.send(embed=embed)
 
@@ -260,6 +261,75 @@ async def bumpersag(interaction : discord.Interaction):
     embed.add_field(name="Mazdaspeed 6", value="[Lower area](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-kit)\n[Fenderwell area](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-kit-fenderwell-area)\n[Headlight area](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-kit-headlight-area)\n[Full Kit](https://raiderfab.myshopify.com/products/mazda-6-mazdaspeed-6-bumper-fitment-full-kit)", inline=False)
     embed.set_author(name=f"Thanks to Raiderfab for making this easy solution!", url=f"{embed.url}")
     await interaction.followup.send(embed=embed)
+
+@client.tree.command(name="indepthmaintenance", description="Here is an in depth maintenance record of what your vehicle should look like")
+async def indepthmaintenance(interaction :discord.Interaction):
+    embed= discord.Embed(
+        title="",
+        description="",
+        colour= discord.Colour.random()
+    )
+    return
+@client.tree.command(name="doanddonts", description="Do's and Don'ts with your Mazdaspeed", guild=guild)
+async def doanddonts(interaction:discord.Interaction):    
+    embed=discord.Embed(
+        title="Do's and Dont's of Mazdaspeeds",
+        colour=discord.Colour.random()
+    )
+    embed.add_field(name="Do's", value="Let car warm up for 15~60 seconds before moving \n", inline=True)
+    embed.add_field(name="Dont's", value="Try to keep RPM under 3000RPM while car is warming up \nDont go full boost until operating temp. Recommended to wait around 5-10 minutes after coolant is at operating temperature because oil warms up slower than coolant \nDont go full throttle (WOT) under 3k rpm \no not go WOT in 6th gear", inline=True)
+
+
+    await interaction.response.send_message(embed=embed)
+
+def oil_from_coolant(Tc):
+    if Tc < -5 or Tc > 125:
+        raise ValueError("Proper Coolant tempurature is between -5c and 125c")
+    if Tc < 75:
+        return Tc - 20
+    progress = min(1.0, (Tc - 75) / 15)
+    return (Tc - 20) * (1 - progress) + 110 * progress
+def get_colour_from_coolant(coolant):
+    if coolant < 75:
+        return discord.Colour.blue()
+    elif coolant <= 100:
+        return discord.Colour.green()
+    else:
+        return discord.Colour.red()
+@client.tree.command(name="tempurature_calculator", description="This provides a rough calculation of where you oil tempurature is related to coolant tempurature")
+async def temps(interaction: discord.Interaction, coolant: float):
+    try:
+        oil = oil_from_coolant(coolant)
+    except ValueError as e:
+        await interaction.response.send_message(str(e))
+        return
+    await interaction.response.defer()
+    embed = discord.Embed(
+        title="Engine Temperatures",
+        colour=get_colour_from_coolant(coolant)
+    )
+    embed.add_field(
+        name="Coolant Temperature",
+        value=f"{coolant:.1f} °C",
+        inline=False
+    )
+    embed.add_field(
+        name="Estimated Oil Temperature",
+        value=f"{oil:.1f} °C",
+        inline=False
+    )
+    if coolant < 75:
+        embed.set_footer(text="Warm-up phase: oil ≈ 20°C cooler than coolant")
+    elif coolant < 89:
+        embed.set_footer(text="Oil warming faster as coolant reaches operating temp")
+    elif coolant <110:
+        embed.set_footer(text="Coolant at temp — oil approaching ~120°C")
+    else:
+        embed.set_footer(text="Coolant is getting hot, suggested to flush coolant or look for issues")
+
+    await interaction.followup.send(embed=embed)
+
+
 @client.event
 async def on_member_remove(member):
     channel = member.guild.get_channel(706661568091389973)
@@ -272,4 +342,4 @@ async def on_member_remove(member):
 
 
 
-client.run(NORMAL_BOT_KEY)
+client.run(DEV_BOT_KEY)
